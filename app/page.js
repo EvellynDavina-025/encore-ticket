@@ -1,65 +1,451 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState } from "react";
+
+import HeroSection from "./components/HeroSection";
+import ConcertCard from "./components/ConcertCard";
+import ConcertFilter from "./components/ConcertFilter";
+
+import { getAllConcerts } from "./services/supabaseConcertService";
+
 
 export default function Home() {
+
+  const [concerts, setConcerts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Search & Filter
+  const [search, setSearch] = useState("");
+  const [city, setCity] = useState("");
+
+
+  useEffect(() => {
+
+    let mounted = true;
+
+    async function loadConcerts() {
+
+      try {
+
+        const data = await getAllConcerts();
+
+        if (mounted) {
+          setConcerts(data || []);
+        }
+
+
+      } catch (err) {
+
+        console.error(
+          "Gagal mengambil data konser:",
+          err
+        );
+
+        if (mounted) {
+          setError(
+            "Data konser gagal dimuat."
+          );
+        }
+
+      } finally {
+
+        if (mounted) {
+          setLoading(false);
+        }
+
+      }
+
+    }
+
+
+    loadConcerts();
+
+
+    return () => {
+      mounted = false;
+    };
+
+  }, []);
+
+
+
+  // Filter Concert
+
+  const filteredConcerts = concerts.filter((concert) => {
+
+
+    const keyword =
+      search.toLowerCase().trim();
+
+
+    const matchSearch =
+      !keyword ||
+      concert.title
+        ?.toLowerCase()
+        .includes(keyword) ||
+      concert.artist
+        ?.toLowerCase()
+        .includes(keyword);
+
+
+
+    const matchCity =
+      city === "" ||
+      concert.city === city;
+
+
+
+    return matchSearch && matchCity;
+
+  });
+
+
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+
+    <main>
+
+
+      <HeroSection />
+
+
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+
+
+        {/* Filter */}
+
+        <ConcertFilter
+
+          search={search}
+          setSearch={setSearch}
+
+          city={city}
+          setCity={setCity}
+
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+
+
+
+        {/* Header */}
+
+        <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+
+
+          <div>
+
+
+            <span className="text-sm font-semibold uppercase tracking-wider text-pink-600 dark:text-blue-400">
+
+              Jangan Ketinggalan
+
+            </span>
+
+
+            <h2 className="mt-2 text-3xl font-bold">
+
+              Konser Mendatang
+
+            </h2>
+
+
+            <p className="mt-2 text-gray-500 dark:text-gray-300">
+
+              Temukan event terbaik dan pesan tiketmu sekarang.
+
+            </p>
+
+
+          </div>
+
+
+
           <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+            href="/concerts"
+
+            aria-label="Lihat semua konser"
+
+            className="inline-flex items-center gap-1 text-sm font-semibold text-pink-600 hover:text-pink-700 dark:text-blue-400"
+
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+
+            Lihat Semua →
+
+          </a>
+
+
+        </div>
+
+
+
+
+
+        {/* Error */}
+
+        {error && (
+
+          <div className="mt-10 rounded-xl bg-red-100 p-5 text-center text-red-600">
+
+            {error}
+
+          </div>
+
+        )}
+
+
+
+
+
+        {/* Loading */}
+
+        {loading && (
+
+          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+
+            {[1,2,3].map((item)=>(
+
+              <div
+
+                key={item}
+
+                className="overflow-hidden rounded-2xl border bg-white dark:bg-slate-900"
+
+              >
+
+
+                <div className="aspect-[3/4] animate-pulse bg-gray-200 dark:bg-slate-700" />
+
+
+                <div className="space-y-3 p-5">
+
+
+                  <div className="h-5 w-3/4 animate-pulse rounded bg-gray-200 dark:bg-slate-700"/>
+
+
+                  <div className="h-4 w-1/2 animate-pulse rounded bg-gray-100 dark:bg-slate-600"/>
+
+
+                  <div className="h-3 w-full animate-pulse rounded bg-gray-100 dark:bg-slate-600"/>
+
+
+                </div>
+
+
+              </div>
+
+            ))}
+
+
+          </div>
+
+        )}
+
+
+
+
+
+
+        {/* Concert List */}
+
+        {!loading && !error && (
+
+          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+
+            {filteredConcerts.map((concert)=>(
+
+
+              <ConcertCard
+
+                key={concert.id}
+
+                concert={concert}
+
+              />
+
+
+            ))}
+
+
+          </div>
+
+        )}
+
+
+
+
+
+
+        {/* Empty State */}
+
+        {!loading &&
+
+        !error &&
+
+        filteredConcerts.length === 0 && (
+
+
+          <div className="mt-16 text-center">
+
+
+            <h3 className="text-2xl font-bold">
+
+              Tidak ada konser ditemukan
+
+            </h3>
+
+
+            <p className="mt-3 text-gray-500 dark:text-gray-400">
+
+              Coba gunakan kata kunci atau filter yang berbeda.
+
+            </p>
+
+
+          </div>
+
+
+        )}
+
+
+
+      </section>
+
+
+
+
+
+
+      {/* Why Encore Ticket */}
+
+
+      <section className="border-t border-gray-200 bg-gray-50 dark:border-slate-800 dark:bg-slate-950">
+
+
+        <div className="mx-auto max-w-7xl px-4 py-20">
+
+
+          <div className="text-center">
+
+
+            <span className="text-sm font-semibold uppercase tracking-wider text-pink-600 dark:text-blue-400">
+
+              Mengapa Encore Ticket?
+
+            </span>
+
+
+
+            <h2 className="mt-3 text-3xl font-bold">
+
+              Beli Tiket dengan Mudah & Aman
+
+            </h2>
+
+
+          </div>
+
+
+
+
+
+          <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+
+
+            <FeatureCard
+
+              emoji="⚡"
+
+              title="Cepat & Praktis"
+
+              description="Pesan tiket hanya dalam beberapa klik tanpa antre."
+
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+
+            <FeatureCard
+
+              emoji="🛡️"
+
+              title="100% Aman"
+
+              description="Transaksi aman dengan sistem keamanan modern."
+
+            />
+
+
+            <FeatureCard
+
+              emoji="🎫"
+
+              title="Realtime"
+
+              description="Update ketersediaan tiket secara langsung."
+
+            />
+
+
+          </div>
+
+
         </div>
-      </main>
-    </div>
+
+
+      </section>
+
+
+    </main>
+
   );
+
+}
+
+
+
+
+
+
+function FeatureCard({
+
+  emoji,
+
+  title,
+
+  description
+
+}) {
+
+
+  return (
+
+    <div className="card p-8 text-center">
+
+
+      <div className="text-5xl">
+
+        {emoji}
+
+      </div>
+
+
+      <h3 className="mt-5 text-xl font-bold">
+
+        {title}
+
+      </h3>
+
+
+      <p className="mt-3 text-gray-500 dark:text-gray-300">
+
+        {description}
+
+      </p>
+
+
+    </div>
+
+  );
+
 }

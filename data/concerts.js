@@ -1,0 +1,48 @@
+const concerts = [
+  {
+    id: 1,
+    slug: "blackpink-world-tour",
+    title: "BLACKPINK WORLD TOUR",
+    artist: "BLACKPINK",
+    venue: "Jakarta International Stadium",
+    date: "2026-10-20",
+    price: 2500000,
+    status: "available",
+    image: "/images/concerts/blackpink.jpg",
+  },
+  {
+    id: 2,
+    slug: "seventeen-right-here",
+    title: "RIGHT HERE",
+    artist: "SEVENTEEN",
+    venue: "ICE BSD",
+    date: "2026-09-18",
+    price: 2000000,
+    status: "available",
+    image: "/images/concerts/seventeen.jpg",
+  },
+  {
+    id: 3,
+    slug: "day6-forever-young",
+    title: "FOREVER YOUNG",
+    artist: "DAY6",
+    venue: "GBK Senayan",
+    date: "2026-08-10",
+    price: 1200000,
+    status: "soldout",
+    image: "/images/concerts/day6.jpg",
+  },
+  {
+    id: 4,
+    slug: "iu-hereh-world-tour",
+    title: "HEREH WORLD TOUR",
+    artist: "IU",
+    venue: "Indonesia Arena",
+    date: "2026-11-08",
+    price: 2800000,
+    status: "available",
+    image: "/images/concerts/iu.jpg",
+  },
+];
+
+export default concerts;
