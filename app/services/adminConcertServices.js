@@ -1,83 +1,151 @@
 import { supabase } from "@/lib/supabase";
 
-/* ==========================
-   GET ALL CONCERTS
-========================== */
 
+// GET semua konser untuk admin
 export async function getConcerts() {
+
   const { data, error } = await supabase
     .from("concerts")
     .select("*")
-    .order("concert_date", { ascending: true });
+    .order("created_at", {
+      ascending: false,
+    });
+
 
   if (error) {
-    console.error(error);
-    return [];
+    console.error(
+      "GET CONCERT ERROR:",
+      error.message
+    );
+
+    throw error;
   }
 
-  return data;
+
+  return data || [];
+
 }
 
-/* ==========================
-   DELETE CONCERT
-========================== */
 
-export async function deleteConcert(id) {
-  const { error } = await supabase
-    .from("concerts")
-    .delete()
-    .eq("id", id);
 
-  if (error) {
-    console.error(error);
-    return false;
-  }
-
-  return true;
-}
-
-/* ==========================
-   ADD CONCERT
-========================== */
-
-export async function addConcert(concert) {
-  const { error } = await supabase
-    .from("concerts")
-    .insert([concert]);
-
-  if (error) {
-    console.error(error);
-    return false;
-  }
-
-  return true;
-}
-
+// GET konser berdasarkan ID
 export async function getConcertById(id) {
+
   const { data, error } = await supabase
     .from("concerts")
     .select("*")
     .eq("id", id)
     .single();
 
+
   if (error) {
-    console.error(error);
-    return null;
+
+    console.error(
+      "GET BY ID ERROR:",
+      error.message
+    );
+
+    throw error;
+
   }
+
 
   return data;
+
 }
 
-export async function updateConcert(id, concert) {
-  const { error } = await supabase
+
+
+// ADD konser
+export async function addConcert(concertData) {
+
+  const { data, error } = await supabase
     .from("concerts")
-    .update(concert)
-    .eq("id", id);
+    .insert([
+      concertData
+    ])
+    .select()
+    .single();
+
+
 
   if (error) {
-    console.error(error);
-    return false;
+
+    console.error(
+      "ADD CONCERT ERROR:",
+      error.message
+    );
+
+    throw error;
+
   }
 
+
+  return data;
+
+}
+
+
+
+// UPDATE konser
+export async function updateConcert(
+  id,
+  concertData
+) {
+
+
+  const { data, error } = await supabase
+    .from("concerts")
+    .update(concertData)
+    .eq("id", id)
+    .select()
+    .single();
+
+
+
+  if(error){
+
+    console.error(
+      "UPDATE ERROR:",
+      error.message
+    );
+
+    throw error;
+
+  }
+
+
+  return data;
+
+}
+
+
+
+// DELETE konser
+export async function deleteConcert(id) {
+
+
+  const { error } = await supabase
+    .from("concerts")
+    .delete()
+    .eq(
+      "id",
+      id
+    );
+
+
+  if(error){
+
+    console.error(
+      "DELETE ERROR:",
+      error.message
+    );
+
+    throw error;
+
+  }
+
+
   return true;
+
 }
