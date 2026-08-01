@@ -15,20 +15,9 @@ dark:bg-slate-900
 
 
 <img
-
-src={
-concert.poster_url ||
-"/placeholder.jpg"
-}
-
-alt={concert.title}
-
-className="
-w-full
-aspect-[3/4]
-object-cover
-"
-
+  src={concert.poster_url}
+  alt={concert.title}
+  className="h-full w-full object-cover"
 />
 
 
