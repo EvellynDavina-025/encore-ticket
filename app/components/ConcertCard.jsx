@@ -1,98 +1,72 @@
+"use client";
+
 import Link from "next/link";
 
-
 export default function ConcertCard({ concert }) {
+  return (
+    <div className="group overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900">
 
-return (
+      {/* Poster */}
+      <div className="aspect-[3/4] overflow-hidden">
 
-<div className="
-rounded-2xl
-overflow-hidden
-border
-bg-white
-dark:bg-slate-900
-">
+        <img
+          src={concert.poster_url}
+          alt={concert.title}
+          className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+        />
 
-
-<img
-  src={concert.poster_url}
-  alt={concert.title}
-  className="h-full w-full object-cover"
-/>
+      </div>
 
 
-<div className="p-5">
+      {/* Content */}
+      <div className="flex flex-col p-5">
 
 
-<h3 className="text-xl font-bold">
-
-{concert.title}
-
-</h3>
+        <h3 className="line-clamp-2 text-xl font-bold">
+          {concert.title}
+        </h3>
 
 
-<p className="mt-2 font-semibold text-pink-600">
-
-{concert.artist}
-
-</p>
+        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+          {concert.artist}
+        </p>
 
 
-<p className="mt-3 text-sm">
+        <div className="mt-4 space-y-1 text-sm">
 
-📍 {concert.city}
+          <p>
+            📍 {concert.venue}, {concert.city}
+          </p>
 
-</p>
+          <p>
+            📅{" "}
+            {new Date(concert.concert_date).toLocaleDateString(
+              "id-ID",
+              {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              }
+            )}
+          </p>
 
-
-<p className="text-sm">
-
-🏟 {concert.venue}
-
-</p>
-
-
-<p className="text-sm">
-
-📅 {
-new Date(
-concert.concert_date
-).toLocaleDateString(
-"id-ID"
-)
-}
-
-</p>
+        </div>
 
 
+        {/* Button */}
+        <Link
+          href={`/concerts/${concert.slug}`}
+          className="mt-6 inline-flex items-center justify-center rounded-xl bg-pink-600 px-5 py-3 font-semibold text-white transition hover:bg-pink-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+        >
 
-<Link
+          Pesan Sekarang 🎫
 
-href={`/concerts/${concert.slug}`}
-
-className="
-block
-mt-5
-rounded-xl
-bg-pink-600
-py-3
-text-center
-text-white
-font-semibold
-"
-
->
-
-Pesan Tiket
-
-</Link>
+        </Link>
 
 
-</div>
+      </div>
 
 
-</div>
-
-);
-
+    </div>
+  );
 }
